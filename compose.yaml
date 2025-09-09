@@ -14,12 +14,17 @@ services:
       - PASSWORD_FILE_PATH=/run/secrets/db-password
       - DB_HOST=db
       - DB_NAME=example
-      - DB_USER=root
-    develop:
+         develop:
       watch:
         - action: sync
-          path: ./src
+          path: ./public
           target: /var/www/html
+        - action: sync
+          path: ./src
+          target: /var/www/src
+        - action: sync
+          path: ./storage
+          target: /var/www/storagetarget: /var/www/html
   db:
     image: mariadb
     restart: always

@@ -1,3 +1,40 @@
-db/
-README.Docker.md
-.idea/
+# Dependencies
+/vendor/
+composer.phar
+composer.lock
+
+# IDE
+/.idea/
+/.vscode/
+*.swp
+*.swo
+
+# Logs
+storage/logs/*.log
+!storage/logs/.gitkeep
+!storage/logs/app.log
+
+# Uploads
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# PHPUnit
+/coverage/
+.phpunit.result.cache
+
+# Environment files
+.env
+.env.local
+
+# Cache
+/cache/
+/tmp/
