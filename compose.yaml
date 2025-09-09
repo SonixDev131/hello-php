@@ -15,17 +15,10 @@ services:
       - DB_HOST=db
       - DB_NAME=example
       - DB_USER=root
-    develop:
-      watch:
-        - action: sync
-          path: ./public
-          target: /var/www/html
-        - action: sync
-          path: ./src
-          target: /var/www/src
-        - action: sync
-          path: ./storage
-          target: /var/www/storage
+    volumes:
+      - ./storage:/var/www/storage
+      - ./public:/var/www/html
+      - ./src:/var/www/src
   db:
     image: mariadb
     restart: always

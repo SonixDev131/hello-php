@@ -32,7 +32,7 @@ RUN echo '<Directory /var/www/html>\n\
     Options Indexes FollowSymLinks\n\
     AllowOverride All\n\
     Require all granted\n\
-</Directory>' > /etc/apache2/conf-available/override.conf && \
+    </Directory>' > /etc/apache2/conf-available/override.conf && \
     a2enconf override
 
 FROM base AS development
@@ -40,6 +40,9 @@ COPY ./tests /var/www/tests
 COPY ./phpunit.xml /var/www/phpunit.xml
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 COPY --from=dev-deps app/vendor/ /var/www/vendor
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 FROM base AS final
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
