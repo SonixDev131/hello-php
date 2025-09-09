@@ -14,7 +14,7 @@ services:
       - PASSWORD_FILE_PATH=/run/secrets/db-password
       - DB_HOST=db
       - DB_NAME=example
-         develop:
+    develop:
       watch:
         - action: sync
           path: ./public
@@ -24,7 +24,7 @@ services:
           target: /var/www/src
         - action: sync
           path: ./storage
-          target: /var/www/storagetarget: /var/www/html
+          target: /var/www/storage
   db:
     image: mariadb
     restart: always
