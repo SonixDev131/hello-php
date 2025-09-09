@@ -10,6 +10,7 @@ class HomeController
         echo "<li><a href='/hello'>Hello World</a></li>";
         echo "<li><a href='/database'>Database Test</a></li>";
         echo "<li><a href='/database/create-sample'>Create Sample Table</a></li>";
+        echo "<li><a href='/messages'><strong>Messages Demo</strong> (Working Database Code)</a></li>";
         echo "</ul>";
         
         echo "<h2>Project Structure</h2>";

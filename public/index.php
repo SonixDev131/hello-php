@@ -45,6 +45,18 @@ switch ($path) {
         $controller = new DatabaseController();
         $controller->createSample();
         break;
+    
+    case '/messages':
+        require_once SRC_PATH . '/Controllers/MessagesController.php';
+        $controller = new MessagesController();
+        $controller->index();
+        break;
+    
+    case '/messages/clear':
+        require_once SRC_PATH . '/Controllers/MessagesController.php';
+        $controller = new MessagesController();
+        $controller->clear();
+        break;
 
     default:
         http_response_code(404);

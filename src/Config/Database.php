@@ -3,10 +3,8 @@
 class Database
 {
     private static $connection = null;
-    private static $connectionAttempts = 0;
-    private static $maxAttempts = 5;
 
-    public static function getConnection(): ?PDO
+    public static function getConnection(): PDO
     {
         if (self::$connection === null) {
             self::$connection = self::createConnection();
@@ -15,60 +13,27 @@ class Database
         return self::$connection;
     }
 
-    private static function createConnection(): ?PDO
+    private static function createConnection(): PDO
     {
-        $passwordFile = $_SERVER['PASSWORD_FILE_PATH'] ?? '/run/secrets/db-password';
-        $host = $_SERVER['DB_HOST'] ?? 'localhost';
-        $dbname = $_SERVER['DB_NAME'] ?? 'example';
-        $username = $_SERVER['DB_USER'] ?? 'root';
+        // Read the database connection parameters from environment variables
+        $db_host = getenv('DB_HOST');
+        $db_name = getenv('DB_NAME');
+        $db_user = getenv('DB_USER');
+        
+        // Read the password file path from an environment variable
+        $password_file_path = getenv('PASSWORD_FILE_PATH');
+        
+        // Read the password from the file
+        $db_pass = trim(file_get_contents($password_file_path));
+        
+        // Create a new PDO instance
+        $db_handle = new PDO("mysql:host=$db_host;dbname=$db_name", $db_user, $db_pass);
+        
+        // Set PDO attributes
+        $db_handle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $db_handle->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-        // Try to read password file
-        if (!file_exists($passwordFile)) {
-            error_log("Database password file not found: $passwordFile");
-            return null;
-        }
-
-        $password = file_get_contents($passwordFile);
-        if ($password === false) {
-            error_log("Could not read database password from file: $passwordFile");
-            return null;
-        }
-        $password = trim($password);
-
-        $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
-
-        // Retry connection with backoff
-        while (self::$connectionAttempts < self::$maxAttempts) {
-            try {
-                self::$connectionAttempts++;
-                
-                $connection = new PDO($dsn, $username, $password, [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_TIMEOUT => 5,
-                ]);
-
-                // Test the connection
-                $connection->query('SELECT 1');
-                
-                error_log("Database connected successfully after " . self::$connectionAttempts . " attempts");
-                return $connection;
-
-            } catch (PDOException $e) {
-                error_log("Database connection attempt " . self::$connectionAttempts . " failed: " . $e->getMessage());
-                
-                if (self::$connectionAttempts >= self::$maxAttempts) {
-                    error_log("Max database connection attempts reached");
-                    break;
-                }
-                
-                // Wait before retry (exponential backoff)
-                $waitTime = pow(2, self::$connectionAttempts - 1);
-                sleep($waitTime);
-            }
-        }
-
-        return null;
+        return $db_handle;
     }
 
     public static function isConnected(): bool
@@ -79,6 +44,5 @@ class Database
     public static function resetConnection(): void
     {
         self::$connection = null;
-        self::$connectionAttempts = 0;
     }
 }
