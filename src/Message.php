@@ -13,6 +13,10 @@ class Message
         $this->createdAt = new \DateTime();
     }
 
+
+    /**
+    * @return array<string,string>
+    */
     public function toArray(): array
     {
         return [

@@ -2,7 +2,6 @@
 
 class GuestBook
 {
-
     public function __construct(private Storage $storage)
     {
     }
@@ -14,6 +13,9 @@ class GuestBook
         $this->storage->save($messages);
     }
 
+    /**
+     * @return array<Message>
+     */
     public function loadFromFile(): array
     {
         return $this->storage->load();
